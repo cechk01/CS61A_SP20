@@ -45,19 +45,20 @@ def planet(size):
     """Construct a planet of some size."""
     assert size > 0
     "*** YOUR CODE HERE ***"
+    return ['planet',size]
 
 def size(w):
     """Select the size of a planet."""
     assert is_planet(w), 'must call size on a planet'
     "*** YOUR CODE HERE ***"
+    return w[1]
 
 def is_planet(w):
     """Whether w is a planet."""
     return type(w) == list and len(w) == 2 and w[0] == 'planet'
 
 def examples():
-    t = mobile(arm(1, planet(2)),
-               arm(2, planet(1)))
+    t = mobile(arm(1, planet(2)),arm(2, planet(1)))
     u = mobile(arm(5, planet(1)),
                arm(1, mobile(arm(2, planet(3)),
                               arm(3, planet(2)))))
@@ -98,6 +99,20 @@ def balanced(m):
     False
     """
     "*** YOUR CODE HERE ***"
+    leftArm = left(m)
+    leftTorque = length(leftArm) * total_weight(end(leftArm))
+    
+    rightArm = right(m)
+    rightTorque = length(rightArm)* total_weight(end(rightArm))
+
+    balance_status = leftTorque == rightTorque
+    
+    if not is_planet(end(leftArm)):
+        balance_status = balance_status and balanced(end(leftArm))
+    if not is_planet(end(rightArm)):
+        balance_status = balance_status and balanced(end(rightArm))
+    
+    return (balance_status)
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -125,6 +140,10 @@ def totals_tree(m):
           2
     """
     "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return tree(size(m))
+    return tree(total_weight(m),[totals_tree(end(left(m))),totals_tree(end(right(m)))])
+
 
 def replace_leaf(t, old, replacement):
     """Returns a new tree where every leaf value equal to old has
@@ -156,6 +175,9 @@ def replace_leaf(t, old, replacement):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t) and label(t) == old:
+        return tree(replacement)
+    return tree(label(t),[replace_leaf(b,old,replacement)for b in branches(t)])
 
 def make_withdraw(balance, password):
     """Return a password-protected withdraw function.
@@ -185,7 +207,20 @@ def make_withdraw(balance, password):
     >>> type(w(10, 'l33t')) == str
     True
     """
+    attempts = []
     "*** YOUR CODE HERE ***"
+    def withdraw(amount, passwordToTry):
+        nonlocal balance
+        if len(attempts) >=3:
+            return "Your account is locked. Attempts: {}".format(attempts)
+        if passwordToTry != password:
+            attempts.append(passwordToTry)
+            return "Incorrect password"
+        if amount > balance:
+           return 'Insufficient funds'
+        balance =  balance - amount
+        return balance
+    return withdraw
 
 def make_joint(withdraw, old_pass, new_pass):
     """Return a password-protected withdraw function that has joint access to
@@ -226,6 +261,22 @@ def make_joint(withdraw, old_pass, new_pass):
     "Your account is locked. Attempts: ['my', 'secret', 'password']"
     """
     "*** YOUR CODE HERE ***"
+    
+    def joint(amount,joint_password):
+        # if joint_password != new_pass and joint_password != old_pass:
+        if joint_password not in [new_pass, old_pass]:
+            print("DEBUG: WHY HERE AGAIN???")
+            return withdraw(amount,joint_password)
+        
+        return withdraw(amount,old_pass)
+        # if type(withdraw(amount,old_pass)) == str:
+            # return "Incorrect password"
+    
+    a= withdraw(0,old_pass)
+    if type(a) == str:
+        return a
+        
+    return joint
 
 
 
@@ -305,11 +356,12 @@ def interval(a, b):
 def lower_bound(x):
     """Return the lower bound of interval x."""
     "*** YOUR CODE HERE ***"
+    return x[0]
 
 def upper_bound(x):
     """Return the upper bound of interval x."""
     "*** YOUR CODE HERE ***"
-
+    return x[1]
 def str_interval(x):
     """Return a string representation of interval x.
     """
@@ -325,22 +377,27 @@ def add_interval(x, y):
 def mul_interval(x, y):
     """Return the interval that contains the product of any value in x and any
     value in y."""
-    p1 = x[0] * y[0]
-    p2 = x[0] * y[1]
-    p3 = x[1] * y[0]
-    p4 = x[1] * y[1]
-    return [min(p1, p2, p3, p4), max(p1, p2, p3, p4)]
+    p1 = lower_bound(x) * lower_bound(y)
+    p2 = lower_bound(x) * upper_bound(y)
+    p3 = upper_bound(x) * lower_bound(y)
+    p4 = upper_bound(x) * upper_bound(y)
+    return interval(min(p1, p2, p3, p4), max(p1, p2, p3, p4))
 
 def sub_interval(x, y):
     """Return the interval that contains the difference between any value in x
     and any value in y."""
     "*** YOUR CODE HERE ***"
+    lower = lower_bound(x) - upper_bound(y)
+    upper = upper_bound(x) - lower_bound(y)
+    return interval(lower, upper)
 
 def div_interval(x, y):
     """Return the interval that contains the quotient of any value in x divided by
     any value in y. Division is implemented as the multiplication of x by the
     reciprocal of y."""
     "*** YOUR CODE HERE ***"
+    assert upper_bound(y) > 0
+    assert lower_bound(y) > 0
     reciprocal_y = interval(1/upper_bound(y), 1/lower_bound(y))
     return mul_interval(x, reciprocal_y)
 
@@ -354,7 +411,7 @@ def par2(r1, r2):
     return div_interval(one, add_interval(rep_r1, rep_r2))
 
 def multiple_references_explanation():
-    return """The multiple reference problem..."""
+    return """Both are trash, resistors aren't intervals"""
 
 def quadratic(x, a, b, c):
     """Return the interval that is the range of the quadratic defined by
@@ -366,3 +423,4 @@ def quadratic(x, a, b, c):
     '0 to 10'
     """
     "*** YOUR CODE HERE ***"
+    return a*t*t + b*t + c

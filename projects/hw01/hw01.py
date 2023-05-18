@@ -15,9 +15,9 @@ def a_plus_abs_b(a, b):
     ['return h(a, b)']
     """
     if b >= 0:
-        h = _____
+        h = add
     else:
-        h = _____
+        h = sub
     return h(a, b)
 
 def two_of_three(x, y, z):
@@ -38,7 +38,7 @@ def two_of_three(x, y, z):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(two_of_three)).body[0].body]
     ['Expr', 'Return']
     """
-    return _____
+    return min(x,y,z)**2 + max(min(x,y),min(y,z),min(x,z))**2
 
 def largest_factor(x):
     """Return the largest factor of x that is smaller than x.
@@ -50,7 +50,13 @@ def largest_factor(x):
     >>> largest_factor(13) # factor is 1 since 13 is prime
     1
     """
-    "*** YOUR CODE HERE ***"
+    z =1
+    for y in range(1,x):
+        # print(y)
+        if (x % y == 0):
+            # print("found new value")
+            z = y
+    return z
 
 def if_function(condition, true_result, false_result):
     """Return true_result if condition is a true value, and
@@ -94,15 +100,15 @@ def with_if_function():
     return if_function(c(), t(), f())
 
 def c():
-    "*** YOUR CODE HERE ***"
+    return False
 
 def t():
-    "*** YOUR CODE HERE ***"
+    print(5)
 
 def f():
-    "*** YOUR CODE HERE ***"
+    print(6)
 
-def hailstone(x):
+def hailstone():
     """Print the hailstone sequence starting at x and return its
     length.
 
@@ -117,4 +123,32 @@ def hailstone(x):
     >>> a
     7
     """
-    "*** YOUR CODE HERE ***"
+    new_high = 0
+    high_count = 0
+    for x in range(10000000):
+        # print("Current x")
+        # print(x)
+        current_x = x
+        count = 1
+        # print(x)
+        while x > 1:
+            if x % 2 == 0:
+                x=x/2
+            else:
+                x= x*3+1
+            count = count +1
+            # print("%.0f" % x)
+        if count > high_count:
+            # print("high_count")
+            # print(high_count)
+            high_count = count
+            # print("new high")
+            # print(new_high)
+            new_high = current_x
+    print("new high")
+    print(new_high)
+    print("high_count")
+    print(high_count)
+    return new_high
+
+hailstone()
