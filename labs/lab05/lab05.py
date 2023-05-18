@@ -16,6 +16,10 @@ def couple(lst1, lst2):
     """
     assert len(lst1) == len(lst2)
     "*** YOUR CODE HERE ***"
+    clist= []
+    for x in range(len(lst1)):
+        clist.append([lst1[x],lst2[x]])
+    return clist
 
 from math import sqrt
 def distance(city1, city2):
@@ -30,6 +34,11 @@ def distance(city1, city2):
     5.0
     """
     "*** YOUR CODE HERE ***"
+    x1 = get_lat(city1)
+    y1 = get_lon(city1)
+    x2 = get_lat(city2)
+    y2 = get_lon(city2)
+    return sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
 def closer_city(lat, lon, city1, city2):
     """
@@ -46,6 +55,11 @@ def closer_city(lat, lon, city1, city2):
     'Bucharest'
     """
     "*** YOUR CODE HERE ***"
+    target_city = make_city("target_city",lat,lon)
+    
+    if distance(target_city,city1) < distance(target_city,city2):
+        return get_name(city1)
+    return  get_name(city2)
 
 def check_abstraction():
     """
@@ -145,6 +159,14 @@ def nut_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
+    if label(t) == 'nut':
+        return True
+    nuts = [value for value in (nut_finder(b) for b in branches(t)) if value]
+    for nut in nuts:
+        return nut
+    # no nut :(
+    return False
+    
 
 def sprout_leaves(t, values):
     """Sprout new leaves containing the data in values at each leaf in
@@ -180,6 +202,10 @@ def sprout_leaves(t, values):
           2
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return tree(label(t),[tree(L) for L in values])
+    sprouted = [sprout_leaves(b,values) for b in branches(t)]
+    return tree(label(t),sprouted)
 
 
 # Tree ADT
