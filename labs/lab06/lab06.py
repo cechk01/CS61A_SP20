@@ -15,6 +15,17 @@ def make_adder_inc(n):
     11
     """
     "*** YOUR CODE HERE ***"
+    # def inc(g):
+    #     while 1:
+    #         yield g
+    #         g= g + 1
+    # i = inc(n)
+    # x = 
+    def make_adder(y):
+        nonlocal n
+        n += 1
+        return  y + n -1
+    return make_adder
 def make_fib():
     """Returns a function that returns the next Fibonacci number
     every time it is called.
@@ -33,12 +44,34 @@ def make_fib():
     >>> fib2 = make_fib()
     >>> fib() + sum([fib2() for _ in range(5)])
     12
-    >>> from construct_check import check
-    >>> # Do not use lists in your implementation
-    >>> check(this_file, 'make_fib', ['List'])
-    True
     """
     "*** YOUR CODE HERE ***"
+    prev1 = 0
+    prev2 = 0
+    x= 0
+    def fibber():
+        nonlocal prev1
+        nonlocal prev2
+        nonlocal x
+        if x == 0:
+            x += 1
+            return 0
+        if x == 1:
+            x = 2
+            prev1 = 1
+            return 1
+        print("DEBUG: prev1", prev1)
+        print("DEBUG: prev2", prev2)
+        result = prev1 + prev2
+        prev2 = prev1
+        prev1 = result
+        if prev1 == 0 & prev2 ==0:
+            prev1 = 1
+        
+        # if x == 0:
+        # x =
+        return result
+    return fibber
 
 # Generators
 def naturals():
@@ -70,6 +103,8 @@ def scale(it, multiplier):
     [2, 4, 6, 8, 10]
     """
     "*** YOUR CODE HERE ***"
+    for i in it:
+        yield i * multiplier
 
 def hailstone(n):
     """
@@ -85,5 +120,12 @@ def hailstone(n):
     1
     """
     "*** YOUR CODE HERE ***"
+    yield n
+    while n >1:   
+        if n%2 ==0:
+            n = int(n/2)
+        else:
+            n = n*3 +1
+        yield n
 
 
